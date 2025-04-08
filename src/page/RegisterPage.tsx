@@ -9,7 +9,9 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #ffcc00, #ff6600);
+  background-image: url("/landing-page.jpg");
+  background-size: cover;
+  background-position: center;
   padding: 0 20px;
 `;
 

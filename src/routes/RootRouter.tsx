@@ -1,35 +1,33 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { DashBoardPage, LoginPage, RegisterPage } from "../page";
-import { JSX } from "react";
+import { LoginPage, RegisterPage } from "../page";
+import ProtectedRoute from "./ProtectedRoute";
+import LandingPage from "../page/LandingPage";
 
 const RootRoutes = () => {
   const { user } = useAuth();
-
-  const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
-    if (!user) {
-      return <Navigate to="/login" />;
-    }
-    return element;
-  };
 
   return (
     <Routes>
       <Route
         path="/login"
-        element={user ? <Navigate to="/dashboard" /> : <LoginPage />}
+        element={user ? <Navigate to="/landing" /> : <LoginPage />}
       />
       <Route
         path="/signup"
-        element={user ? <Navigate to="/dashboard" /> : <RegisterPage />}
+        element={user ? <Navigate to="/landing" /> : <RegisterPage />}
       />
 
       <Route
-        path="/dashboard"
-        element={<ProtectedRoute element={<DashBoardPage />} />}
+        path="/"
+        element={<LandingPage />}
+      />
+      <Route
+        path="/landing2"
+        element={<ProtectedRoute element={<LandingPage />} />}
       />
 
-      <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/*" element={<Navigate to="/" />} />
     </Routes>
   );
 };

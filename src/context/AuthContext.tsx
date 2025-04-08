@@ -22,11 +22,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const savedUser = localStorage.getItem("token");
+    
     if (savedUser) {
       // setUser(JSON.parse(savedUser));
       setUser(savedUser);
     }
-  }, []);
+  }, [navigate]);
 
   const logout = () => {
     setUser(null);

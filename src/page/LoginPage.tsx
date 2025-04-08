@@ -10,7 +10,9 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f9b800;
+  background-image: url("/landing-page.jpg");
+  background-size: cover;
+  background-position: center;
   padding: 0 20px;
 `;
 
@@ -81,24 +83,22 @@ export const LoginPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const loginMutation = useMutation({
+  const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: (formData: SignInDTO) => {
       return login(formData);
     },
   });
 
   const onfinish = (body: any) => {
-    loginMutation.mutate(body, {
+    loginMutation(body, {
       onSuccess(data) {
         notification.success({
           message: "Login Successful",
           description: "Welcome back! You have successfully logged in.",
         });
-        console.log(data);
-        
         localStorage.setItem("token", data.data.accessToken);
         localStorage.setItem("refreshToken", data.data.refreshToken);
-        navigate("/dashboard");
+        navigate("/");
       },
       onError(data) {
         console.log(data);
@@ -137,9 +137,10 @@ export const LoginPage = () => {
               <CustomButton
                 type="primary"
                 htmlType="submit"
+                loading={isPending}
                 block
-                whileHover={{ scale: 1.05 }} // Motion effect on hover
-                whileTap={{ scale: 0.95 }} // Scale down when clicked
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Continue
               </CustomButton>
