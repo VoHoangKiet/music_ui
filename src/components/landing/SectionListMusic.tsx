@@ -1,39 +1,18 @@
-import { PlayCircleOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
+import {
+  HeartFilled,
+  HeartOutlined,
+  MoreOutlined,
+  PlayCircleOutlined,
+} from "@ant-design/icons";
+import { Button, Card, Dropdown, notification } from "antd";
 import styled from "styled-components";
-
-const musicList = [
-  {
-    imageUrl:
-      "https://media.vov.vn/sites/default/files/styles/large/public/2025-04/487796994_1131466462113917_481745465163557361_n.jpg",
-    title: "Nước Mắt Cá Sấu",
-    subTitle: "HIEUTHUHAI",
-  },
-  {
-    imageUrl:
-      "https://i1.sndcdn.com/artworks-MB8Olhqn4KyKz34Q-AShOtQ-t500x500.jpg",
-    title: "Bắc Bling",
-    subTitle: "Hòa Minzy",
-  },
-  {
-    imageUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu3op3dn58esjGplvwdVeKLtLC-vvKY6xXIw&s",
-    title: "Sự nghiệp chướng",
-    subTitle: "Pháo",
-  },
-  {
-    imageUrl:
-      "https://media.vov.vn/sites/default/files/styles/large/public/2025-04/487796994_1131466462113917_481745465163557361_n.jpg",
-    title: "Nước Mắt Cá Sấu",
-    subTitle: "HIEUTHUHAI",
-  },
-  {
-    imageUrl:
-      "https://i1.sndcdn.com/artworks-MB8Olhqn4KyKz34Q-AShOtQ-t500x500.jpg",
-    title: "Bắc Bling",
-    subTitle: "Hòa Minzy",
-  },
-];
+import { Song } from "../../hook/song/useAllSongs";
+import { useAudioPlayer } from "../../context/AudioPlayerContext";
+import { useLikeSong } from "../../hook/song/useLikeSong";
+import { useFavoriteSongs } from "../../hook/song/useFavoriteSongs";
+import { useQueryClient } from "@tanstack/react-query";
+import { AddToPlaylistModal } from "../playlist/addToPlaylistModal";
+import { useState } from "react";
 
 const Title = styled.div`
   padding: 20px 0;
@@ -46,18 +25,52 @@ const Title = styled.div`
   border-radius: 10px;
 `;
 
-export const SectionListMusic = () => {
+interface SectionListMusicProps {
+  songs: Song[];
+  playlistName?: string;
+}
+
+const thumbnail =
+  "https://i.pinimg.com/736x/5b/2f/5e/5b2f5e020eb4ab271ae09641092cfddd.jpg";
+
+export const SectionListMusic = ({
+  songs,
+  playlistName,
+}: SectionListMusicProps) => {
+  const queryClient = useQueryClient();
+  const { playTrack } = useAudioPlayer();
+  const { mutate } = useLikeSong();
+  const { data } = useFavoriteSongs();
+
+  const handleLikeSong = (songId: string) => {
+    mutate(songId, {
+      onSuccess: (data) => {
+        console.log(data);
+        queryClient.invalidateQueries({ queryKey: ["my-info"] });
+      },
+      onError: (error) => {
+        notification.error({ message: error.message });
+      },
+    });
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Title>Trending Songs</Title>
+      <Title>{playlistName ? playlistName : "Trending Songs"}</Title>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-        {musicList.map((music, index) => (
+        {songs?.map((song, index) => (
           <MusicCard
+            songId={song._id}
+            playTrack={() => playTrack(song)}
             key={index}
-            imageUrl={music.imageUrl}
-            title={music.title}
-            subTitle={music.subTitle}
+            imageUrl={song.thumbnail}
+            title={song.title}
+            isFavorite={
+              data?.some((favoriteSong) => favoriteSong._id === song._id) ||
+              false
+            }
+            subTitle={song.genre.name || "Unknown Genre"}
+            likeSong={() => handleLikeSong(song._id)}
           />
         ))}
       </div>
@@ -125,36 +138,106 @@ const StyledSubTitle = styled.p`
   }
 `;
 
+const FavoriteButton = styled(Button)`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: transparent;
+  border: none;
+  font-size: 22px;
+  color: #fff;
+  z-index: 2;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.2);
+    background-color: transparent !important;
+  }
+`;
+
 interface MusicCardType {
   imageUrl: string;
   title: string;
   subTitle: string;
+  playTrack: () => void;
+  isFavorite: boolean;
+  likeSong: () => void;
+  songId: string;
 }
 
-const MusicCard = ({ imageUrl, title, subTitle }: MusicCardType) => {
-  const handlePointerEnter = () => {
-    console.log("Pointer entered");
+const MoreButton = styled(Button)`
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  z-index: 2;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+`;
+
+const items = [
+  {
+    key: 1,
+    label: "Add to Playlist"
+  }
+];
+
+const MusicCard = ({
+  imageUrl,
+  title,
+  subTitle,
+  playTrack,
+  isFavorite,
+  likeSong,
+  songId,
+}: MusicCardType) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleMenuClick = (e: any) => {
+    if (e.key === "1") {
+      setIsModalOpen(true);
+    }
   };
-  
-  const handlePointerLeave = () => {
-    console.log("Pointer left");
-  };
+
   return (
     <StyledCard hoverable>
       <div style={{ position: "relative" }}>
         <StyledImage alt="album" src={imageUrl} />
         <PlayButton
           shape="circle"
-          icon={
-            <PlayCircleOutlined
-              onPointerEnterCapture={handlePointerEnter}
-              onPointerLeaveCapture={handlePointerLeave}
-            />
-          }
+          icon={<PlayCircleOutlined />}
+          onClick={playTrack}
         />
+        <FavoriteButton onClick={likeSong}>
+          {isFavorite ? (
+            <HeartFilled style={{ color: "red" }} />
+          ) : (
+            <HeartOutlined />
+          )}
+        </FavoriteButton>
+
+        <Dropdown
+          menu={{
+            items,
+            onClick: handleMenuClick,
+          }}
+          placement="bottomRight"
+        >
+          <MoreButton shape="circle" icon={<MoreOutlined />} />
+        </Dropdown>
       </div>
       <StyledTitle>{title}</StyledTitle>
       <StyledSubTitle>{subTitle}</StyledSubTitle>
+      <AddToPlaylistModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        songId={songId}
+      />
     </StyledCard>
   );
 };

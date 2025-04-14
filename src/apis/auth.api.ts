@@ -1,3 +1,4 @@
+import { Song } from "../hook/song/useAllSongs";
 import api from "./axiosCustom";
 import { appUrls } from "./contants";
 
@@ -13,6 +14,7 @@ export interface User {
   adminId?: string;
   createdAt: Date;
   updatedAt: Date;
+  favoriteSongs?: Song[]
 }
 export interface UpdateProfileDTO {
   username: string;
@@ -68,3 +70,14 @@ export const login = async (body: SignInDTO) => {
   const response = await api.post(`${appUrls.backendUrl}/auth/login`, body);
   return response.data;
 };
+
+export interface User{
+  _id: string;
+  username: string;
+  email: string;
+  phone: string;
+  registerDate: Date;
+  adminId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

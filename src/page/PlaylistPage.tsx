@@ -1,9 +1,11 @@
-import { Layout, Spin } from "antd";
+import { useParams } from "react-router-dom";
+import { Empty, Layout, Spin } from "antd";
 import styled from "styled-components";
 import { SectionListMusic } from "../components/landing";
 import { LibrarySider } from "../components/layout/sider";
 import MusicPlayer from "../components/music/player";
-import { useAllSongs } from "../hook/song/useAllSongs";
+import { useAllMyPlaylists } from "../hook/playlist/useAllMyPlaylist";
+
 const { Content } = Layout;
 
 const Wrapper = styled.div`
@@ -26,10 +28,11 @@ const CustomContent = styled(Content)`
   overflow-y: auto;
 `;
 
-const LandingPage = () => {
-  const { data, isLoading } = useAllSongs();
-  
-  if (isLoading || !data) {
+export const PlaylistPage = () => {
+  const { playlistId } = useParams();
+  const { data: playlists, isLoading } = useAllMyPlaylists();
+
+  if (isLoading || !playlists) {
     return (
       <Wrapper>
         <Spin size="large" />
@@ -37,17 +40,24 @@ const LandingPage = () => {
     );
   }
 
+  const playlist = playlists.find((p) => p._id === playlistId);
+
+  if (!playlist) {
+    return (
+      <Wrapper>
+        <Empty description="Playlist không tồn tại hoặc đã bị xóa" />
+      </Wrapper>
+    );
+  }
   return (
     <Wrapper>
       <CustomLayout>
         <LibrarySider />
         <CustomContent>
-          <SectionListMusic songs={data} />
+          <SectionListMusic playlistName={playlist.name} songs={playlist.songs} />
         </CustomContent>
       </CustomLayout>
       <MusicPlayer />
     </Wrapper>
   );
 };
-
-export default LandingPage;

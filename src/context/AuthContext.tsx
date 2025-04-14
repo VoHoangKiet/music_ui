@@ -1,8 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { User } from "../apis/auth.api";
 
 interface AuthContextType {
-  user: string | null;
+  user: User | null;
   logout: () => void;
 }
 
@@ -17,22 +18,21 @@ export const useAuth = (): AuthContextType => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("userInfo");
     
     if (savedUser) {
-      // setUser(JSON.parse(savedUser));
-      setUser(savedUser);
+      setUser(JSON.parse(savedUser));
     }
   }, [navigate]);
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userInfo");
     navigate("/login");
   };
 

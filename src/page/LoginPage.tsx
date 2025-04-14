@@ -97,7 +97,7 @@ export const LoginPage = () => {
           description: "Welcome back! You have successfully logged in.",
         });
         localStorage.setItem("token", data.data.accessToken);
-        localStorage.setItem("refreshToken", data.data.refreshToken);
+        localStorage.setItem('userInfo', JSON.stringify(data.data.user));
         navigate("/");
       },
       onError(data) {

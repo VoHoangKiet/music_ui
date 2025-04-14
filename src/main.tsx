@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import RootRoutes from "./routes/RootRouter.tsx";
 import { ConfigProvider } from "antd";
 import { AuthProvider } from "./context/AuthContext.tsx";
+import { AudioPlayerProvider } from "./context/AudioPlayerContext.tsx";
 
 const queryClient = new QueryClient();
 
@@ -13,10 +14,12 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <ConfigProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <RootRoutes />
-        </QueryClientProvider>
+        <AuthProvider>
+          <AudioPlayerProvider>
+            <QueryClientProvider client={queryClient}>
+              <RootRoutes />
+            </QueryClientProvider>
+          </AudioPlayerProvider>
         </AuthProvider>
       </ConfigProvider>
     </BrowserRouter>
