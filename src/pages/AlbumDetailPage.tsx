@@ -14,6 +14,7 @@ const AlbumDetailContainer = styled.div`
   margin: 0 auto;
   min-height: calc(100vh - 64px);
   background-color: transparent;
+  padding-bottom: 100px;
 `;
 
 const AlbumHeader = styled.div`

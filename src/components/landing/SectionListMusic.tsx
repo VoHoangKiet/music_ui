@@ -77,9 +77,10 @@ export const SectionListMusic = ({
 };
 
 const StyledCard = styled(Card)`
-  width: 240px;
+  width: 230px;
+  height: 330px;
   border-radius: 15px;
-  background-color: #121212;
+  background-color: #3a3a3a;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
   color: #fff;
   overflow: hidden;

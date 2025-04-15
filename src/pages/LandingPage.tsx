@@ -8,6 +8,7 @@ const { Content } = Layout;
 const Wrapper = styled.div`
   background-color: rgba(240, 242, 245, 0.5);
   min-height: 90vh;
+  padding-bottom: 100px;
 `;
 
 const CustomLayout = styled(Layout)`
@@ -23,6 +24,15 @@ const CustomContent = styled(Content)`
   box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.1);
   height: calc(100vh - 80px);
   overflow-y: auto;
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 `;
 
 const LandingPage = () => {
