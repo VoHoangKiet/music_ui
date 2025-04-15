@@ -7,6 +7,9 @@ import LandingPage from "../pages/LandingPage";
 import MainLayout from "../components/layout/mainLayout";
 import { PlaylistPage } from "../pages/PlaylistPage";
 import AdminPage from "../pages/admin/AdminPage";
+import AlbumListPage from "../pages/AlbumListPage";
+import AlbumDetailPage from "../pages/AlbumDetailPage";
+import SongDetailPage from "../pages/SongDetailPage";
 
 const RootRoutes = () => {
   const { user } = useAuth();
@@ -18,6 +21,9 @@ const RootRoutes = () => {
 
       <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/albums" element={<AlbumListPage />} />
+          <Route path="/album/:albumId" element={<AlbumDetailPage />} />
+          <Route path="/song/:songId" element={<SongDetailPage />} />
           <Route path="/landing2" element={<ProtectedRoute element={<LandingPage />} />} />
           <Route path="/playlist/:playlistId" element={<ProtectedRoute element={<PlaylistPage />} />} />
           <Route path="/admin" element={<AdminRoute element={<AdminPage />} />} />

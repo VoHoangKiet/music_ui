@@ -2,35 +2,31 @@ import { useQuery } from "@tanstack/react-query";
 import { useAccessToken } from "../auth/useUserInfo";
 import api from "../../apis/axiosCustom";
 import { appUrls } from "../../apis/contants";
-import { Genre } from "../genre/useAllGenres";
+import { Artist } from "../artist/useAllArtists";
+import { Song } from "../song/useAllSongs";
 
-export interface Song {
+export interface Album {
   _id: string;
   title: string;
-  genre: Genre;
-  lyric: string;
-  playCount: number;
-  duration: string;
+  artist: Artist;
   releaseDate: Date;
-  secureUrl: string;
-  admin: string;
-  thumbnail: string;
+  coverAt: string;
   createdAt: Date;
   updatedAt: Date;
+  songs?: Song[];
 }
 
-export function useAllSongs() {
+export const useAllAlbums = () => {
   const accessToken = useAccessToken();
-  
-  return useQuery<Song[]>({
-    queryKey: ["songs"],
-    queryFn: () =>
+  return useQuery({
+    queryKey: ["albums"],
+    queryFn: (): Promise<Album[]> =>
       api
-        .get(`${appUrls.backendUrl}/song`, {
+        .get(`${appUrls.backendUrl}/album`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         })
         .then((response) => response.data.data),
   });
-}
+};

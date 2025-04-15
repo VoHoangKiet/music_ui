@@ -105,6 +105,8 @@ const HeaderLanding = () => {
   const handleMenuClick = (key: string) => {
     if (key === "1") {
       navigate("/");
+    } else if (key === "2") {
+      navigate("/albums");
     }
   };
 

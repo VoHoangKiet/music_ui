@@ -13,6 +13,7 @@ import { useFavoriteSongs } from "../../hook/song/useFavoriteSongs";
 import { useQueryClient } from "@tanstack/react-query";
 import { AddToPlaylistModal } from "../playlist/addToPlaylistModal";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Title = styled.div`
   padding: 20px 0;
@@ -29,9 +30,6 @@ interface SectionListMusicProps {
   songs: Song[];
   playlistName?: string;
 }
-
-const thumbnail =
-  "https://i.pinimg.com/736x/5b/2f/5e/5b2f5e020eb4ab271ae09641092cfddd.jpg";
 
 export const SectionListMusic = ({
   songs,
@@ -196,6 +194,7 @@ const MusicCard = ({
   likeSong,
   songId,
 }: MusicCardType) => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMenuClick = (e: any) => {
@@ -203,7 +202,9 @@ const MusicCard = ({
       setIsModalOpen(true);
     }
   };
-
+  const handleClick = () => {
+    navigate(`/song/${songId}`);
+  };
   return (
     <StyledCard hoverable>
       <div style={{ position: "relative" }}>
@@ -231,7 +232,7 @@ const MusicCard = ({
           <MoreButton shape="circle" icon={<MoreOutlined />} />
         </Dropdown>
       </div>
-      <StyledTitle>{title}</StyledTitle>
+      <StyledTitle onClick={handleClick}>{title}</StyledTitle>
       <StyledSubTitle>{subTitle}</StyledSubTitle>
       <AddToPlaylistModal
         open={isModalOpen}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 import GenreManagement from './GenreManagement';
 import ArtistManagement from './ArtistManagement';
+import AlbumManagement from './AlbumManagement';
 import { AdminContainer, AdminHeader } from './styles';
 
 const AdminPage: React.FC = () => {
@@ -15,6 +16,11 @@ const AdminPage: React.FC = () => {
       key: 'artists',
       label: 'Artists',
       children: <ArtistManagement />,
+    },
+    {
+      key: 'albums',
+      label: 'Albums',
+      children: <AlbumManagement />,
     },
   ];
 

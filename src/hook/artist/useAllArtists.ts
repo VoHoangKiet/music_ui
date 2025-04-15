@@ -14,7 +14,7 @@ export interface Artist {
 
 export const useAllArtists = () => {
   const accessToken = useAccessToken();
-  return useQuery({
+  return useQuery<Artist[]>({
     queryKey: ["artists"],
     queryFn: () =>
       api

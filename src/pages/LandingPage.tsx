@@ -2,7 +2,6 @@ import { Layout, Spin } from "antd";
 import styled from "styled-components";
 import { SectionListMusic } from "../components/landing";
 import { LibrarySider } from "../components/layout/sider";
-import MusicPlayer from "../components/music/player";
 import { useAllSongs } from "../hook/song/useAllSongs";
 const { Content } = Layout;
 
@@ -45,7 +44,6 @@ const LandingPage = () => {
           <SectionListMusic songs={data} />
         </CustomContent>
       </CustomLayout>
-      <MusicPlayer />
     </Wrapper>
   );
 };
