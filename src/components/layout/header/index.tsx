@@ -101,6 +101,12 @@ const HeaderLanding = () => {
   const handleSignUp = () => navigate("/signup");
   const handleProfile = () => navigate("/profile");
   const handleChangePassword = () => navigate("/change-password");
+  const handleAdminDashboard = () => navigate("/admin");
+  const handleMenuClick = (key: string) => {
+    if (key === "1") {
+      navigate("/");
+    }
+  };
 
   const popoverContent = useMemo(() => {
     if (!user) {
@@ -118,6 +124,9 @@ const HeaderLanding = () => {
         <SectionTitle>Hello, {user.username || "User"}!</SectionTitle>
         <PopoverButton onClick={handleProfile}>Profile</PopoverButton>
         <PopoverButton onClick={handleChangePassword}>Change Password</PopoverButton>
+        {user.adminId && (
+          <PopoverButton onClick={handleAdminDashboard}>Admin Dashboard</PopoverButton>
+        )}
         <SignOutButton onClick={logout}>Sign Out</SignOutButton>
       </PopoverContent>
     );
@@ -156,7 +165,11 @@ const HeaderLanding = () => {
     <HeaderWrapper>
       <Branding onClick={() => navigate("/")}>Spotifo</Branding>
       <SearchBar />
-      <MenuLanding mode="horizontal" items={menuItems} />
+      <MenuLanding 
+        mode="horizontal" 
+        items={menuItems} 
+        onClick={({ key }) => handleMenuClick(key)}
+      />
       {renderAuthArea}
     </HeaderWrapper>
   );
