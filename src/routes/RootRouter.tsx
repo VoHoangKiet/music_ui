@@ -9,13 +9,15 @@ import AdminPage from "../pages/admin/AdminPage";
 import AlbumListPage from "../pages/AlbumListPage";
 import AlbumDetailPage from "../pages/AlbumDetailPage";
 import SongDetailPage from "../pages/SongDetailPage";
+import { useAuth } from "../context/AuthContext";
 
 const RootRoutes = () => {
-  const token = localStorage.getItem("token");
+  const { isLoggedIn } = useAuth();
+  console.log(isLoggedIn);
   return (
     <Routes>
-      <Route path="/login" element={token ? <Navigate to="/" /> : <LoginPage />} />
-      <Route path="/signup" element={token ? <Navigate to="/" /> : <RegisterPage />} />
+      <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <LoginPage />} />
+      <Route path="/signup" element={isLoggedIn ? <Navigate to="/" /> : <RegisterPage />} />
 
       <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />

@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Avatar, Button, Typography, Spin, message, Modal, Form, Input } from "antd";
+import {
+  Card,
+  Avatar,
+  Button,
+  Typography,
+  Spin,
+  message,
+  Modal,
+  Form,
+  Input,
+} from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import { useAuth } from "../context/AuthContext";
@@ -8,6 +18,7 @@ import { useAllMyPlaylists } from "../hook/playlist/useAllMyPlaylist";
 import { useUpdateUser } from "../hook/auth/useUpdateUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserInfo } from "../hook/auth/useUserInfo";
+import { useChangePassword } from "../hook/auth/useChangePassword";
 
 const { Title, Text } = Typography;
 
@@ -64,13 +75,16 @@ const PlaylistImage = styled.img`
 
 export const ProfilePage = () => {
   const queryClient = useQueryClient();
-  const { data: user } =  useUserInfo();
+  const { data: user } = useUserInfo();
   const { logout } = useAuth();
   const { data: playlists, isLoading } = useAllMyPlaylists();
   const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
   const navigate = useNavigate();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+  const [passwordForm] = Form.useForm();
+  const { mutate: changePassword, isPending } = useChangePassword();
 
   const handleLogout = () => {
     logout();
@@ -81,7 +95,7 @@ export const ProfilePage = () => {
   const showEditModal = () => {
     form.setFieldsValue({
       username: user?.username,
-      phone: user?.phone || '',
+      phone: user?.phone || "",
     });
     setIsEditModalVisible(true);
   };
@@ -125,7 +139,11 @@ export const ProfilePage = () => {
         <UserDetails>
           <Title level={2}>{user.username}</Title>
           <Text type="secondary">{user.email}</Text>
-          {user.phone && <Text type="secondary" style={{ display: 'block' }}>Phone: {user.phone}</Text>}
+          {user.phone && (
+            <Text type="secondary" style={{ display: "block" }}>
+              Phone: {user.phone}
+            </Text>
+          )}
           <div style={{ marginTop: 16 }}>
             <Button
               type="primary"
@@ -133,6 +151,12 @@ export const ProfilePage = () => {
               onClick={showEditModal}
             >
               Edit Profile
+            </Button>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={() => setIsPasswordModalVisible(true)}
+            >
+              Change Password
             </Button>
             <Button danger style={{ marginLeft: 8 }} onClick={handleLogout}>
               Logout
@@ -190,11 +214,7 @@ export const ProfilePage = () => {
         onCancel={() => setIsEditModalVisible(false)}
         footer={null}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleEditProfile}
-        >
+        <Form form={form} layout="vertical" onFinish={handleEditProfile}>
           <Form.Item
             name="username"
             label="Username"
@@ -210,7 +230,10 @@ export const ProfilePage = () => {
             name="phone"
             label="Phone Number"
             rules={[
-              { pattern: /^[0-9]{10}$/, message: "Please enter a valid 10-digit phone number!" },
+              {
+                pattern: /^[0-9]{10}$/,
+                message: "Please enter a valid 10-digit phone number!",
+              },
             ]}
           >
             <Input />
@@ -219,6 +242,79 @@ export const ProfilePage = () => {
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUpdating} block>
               Update Profile
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Change Password"
+        open={isPasswordModalVisible}
+        onCancel={() => setIsPasswordModalVisible(false)}
+        footer={null}
+      >
+        <Form
+          form={passwordForm}
+          layout="vertical"
+          onFinish={(values) => {
+            changePassword(values, {
+              onSuccess: () => {
+                message.success("Password changed successfully");
+                setIsPasswordModalVisible(false);
+                passwordForm.resetFields();
+              },
+              onError: () => {
+                message.error("Failed to change password");
+              },
+            });
+          }}
+        >
+          <Form.Item
+            name="oldPassword"
+            label="Current Password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your current password!",
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="newPassword"
+            label="New Password"
+            rules={[
+              { required: true, message: "Please input your new password!" },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmPassword"
+            label="Confirm New Password"
+            dependencies={["newPassword"]}
+            rules={[
+              { required: true, message: "Please confirm your new password!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("newPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("The two passwords do not match!")
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={isPending}>
+              Change Password
             </Button>
           </Form.Item>
         </Form>

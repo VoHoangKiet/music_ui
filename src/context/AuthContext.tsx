@@ -8,6 +8,7 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   isAdmin: boolean;
+  isLoggedIn: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,11 +28,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const { data: user } = useUserInfo();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       setIsAdmin(!!user.adminId);
+      setIsLoggedIn(true);
     }
     setIsLoading(false);
   }, [user, navigate]);
@@ -39,15 +42,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userInfo");
-    queryClient.clear();
     notification.success({
       message: "Logged out successfully",
     });
+    queryClient.clear();
+    setIsLoggedIn(false);
     navigate("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ logout, isLoading, isAdmin }}>
+    <AuthContext.Provider value={{ logout, isLoading, isAdmin, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

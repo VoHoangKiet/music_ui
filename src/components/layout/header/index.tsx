@@ -102,7 +102,6 @@ const HeaderLanding = () => {
   const handleSignIn = () => navigate("/login");
   const handleSignUp = () => navigate("/signup");
   const handleProfile = () => navigate("/profile");
-  const handleChangePassword = () => navigate("/change-password");
   const handleAdminDashboard = () => navigate("/admin");
   const handleMenuClick = (key: string) => {
     if (key === "1") {
@@ -127,9 +126,6 @@ const HeaderLanding = () => {
       <PopoverContent>
         <SectionTitle>Hello, {user.username || "User"}!</SectionTitle>
         <PopoverButton onClick={handleProfile}>Profile</PopoverButton>
-        <PopoverButton onClick={handleChangePassword}>
-          Change Password
-        </PopoverButton>
         {user.adminId && (
           <PopoverButton onClick={handleAdminDashboard}>
             Admin Dashboard
