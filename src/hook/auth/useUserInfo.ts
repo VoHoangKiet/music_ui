@@ -17,6 +17,7 @@ export function useUserInfo() {
         .then((response) => {
           return response.data.data
         }),
+    enabled: !!accessToken,
   });
 }
 

@@ -26,5 +26,6 @@ export function useAllMyPlaylists() {
           },
         })
         .then((response) => response.data.data),
+    enabled: !!accessToken,
   });
 }

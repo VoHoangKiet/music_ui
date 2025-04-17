@@ -97,9 +97,8 @@ const menuItems = [
 
 const HeaderLanding = () => {
   const navigate = useNavigate();
-  const { data: user } = useUserInfo();
   const { logout } = useAuth();
-
+  const { data: user } = useUserInfo();
   const handleSignIn = () => navigate("/login");
   const handleSignUp = () => navigate("/signup");
   const handleProfile = () => navigate("/profile");
@@ -128,9 +127,13 @@ const HeaderLanding = () => {
       <PopoverContent>
         <SectionTitle>Hello, {user.username || "User"}!</SectionTitle>
         <PopoverButton onClick={handleProfile}>Profile</PopoverButton>
-        <PopoverButton onClick={handleChangePassword}>Change Password</PopoverButton>
+        <PopoverButton onClick={handleChangePassword}>
+          Change Password
+        </PopoverButton>
         {user.adminId && (
-          <PopoverButton onClick={handleAdminDashboard}>Admin Dashboard</PopoverButton>
+          <PopoverButton onClick={handleAdminDashboard}>
+            Admin Dashboard
+          </PopoverButton>
         )}
         <SignOutButton onClick={logout}>Sign Out</SignOutButton>
       </PopoverContent>
@@ -155,7 +158,9 @@ const HeaderLanding = () => {
       <Popover content={popoverContent} trigger="click" placement="bottomRight">
         <ProfileBox>
           <Avatar
-            src={"https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"}
+            src={
+              "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+            }
             size={30}
           />
           <span style={{ marginLeft: 8, color: "#000", fontWeight: 500 }}>
@@ -170,9 +175,9 @@ const HeaderLanding = () => {
     <HeaderWrapper>
       <Branding onClick={() => navigate("/")}>Spotifo</Branding>
       <SearchBar />
-      <MenuLanding 
-        mode="horizontal" 
-        items={menuItems} 
+      <MenuLanding
+        mode="horizontal"
+        items={menuItems}
         onClick={({ key }) => handleMenuClick(key)}
       />
       {renderAuthArea}

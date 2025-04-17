@@ -43,6 +43,11 @@ const AlbumTitle = styled(Title)`
   margin: 0 !important;
   font-size: 16px !important;
   color: #000 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 230px;
 `;
 
 const ArtistName = styled(Text)`

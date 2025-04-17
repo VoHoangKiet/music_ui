@@ -9,15 +9,13 @@ import AdminPage from "../pages/admin/AdminPage";
 import AlbumListPage from "../pages/AlbumListPage";
 import AlbumDetailPage from "../pages/AlbumDetailPage";
 import SongDetailPage from "../pages/SongDetailPage";
-import { useUserInfo } from "../hook/auth/useUserInfo";
 
 const RootRoutes = () => {
-  const { data: user } = useUserInfo();
-  
+  const token = localStorage.getItem("token");
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
-      <Route path="/signup" element={user ? <Navigate to="/" /> : <RegisterPage />} />
+      <Route path="/login" element={token ? <Navigate to="/" /> : <LoginPage />} />
+      <Route path="/signup" element={token ? <Navigate to="/" /> : <RegisterPage />} />
 
       <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />

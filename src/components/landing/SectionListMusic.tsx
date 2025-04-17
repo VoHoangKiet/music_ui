@@ -67,7 +67,7 @@ export const SectionListMusic = ({
               data?.some((favoriteSong) => favoriteSong._id === song._id) ||
               false
             }
-            subTitle={song.genre.name || "Unknown Genre"}
+            subTitle={song.genre?.name || "Unknown Genre"}
             likeSong={() => handleLikeSong(song._id)}
           />
         ))}

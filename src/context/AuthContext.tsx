@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserInfo } from "../hook/auth/useUserInfo";
+import { useQueryClient } from "@tanstack/react-query";
+import { notification } from "antd";
 
 interface AuthContextType {
   logout: () => void;
@@ -18,7 +20,10 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const queryClient = useQueryClient();
   const { data: user } = useUserInfo();
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -29,11 +34,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAdmin(!!user.adminId);
     }
     setIsLoading(false);
-  }, [navigate]);
+  }, [user, navigate]);
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userInfo");
+    queryClient.clear();
+    notification.success({
+      message: "Logged out successfully",
+    });
     navigate("/login");
   };
 

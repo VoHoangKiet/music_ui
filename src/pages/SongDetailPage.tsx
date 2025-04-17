@@ -153,7 +153,7 @@ const SongDetailPage: React.FC = () => {
               </div>
 
               <Space direction="vertical" size={8}>
-                <Text type="secondary">Genre: {song.genre.name}</Text>
+                <Text type="secondary">Genre: {song.genre?.name}</Text>
                 {album && (
                   <Text type="secondary">
                     Album:{" "}

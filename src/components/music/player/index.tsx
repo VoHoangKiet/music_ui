@@ -8,57 +8,60 @@ const Wrapper = styled(motion.div)`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 100px;
-  background-color: #fffbea;
+  height: 80px;
+  background-color: #1f1f1f;
   color: #333;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-radius: 10px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-`;
-
-const InfoOverlay = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
   z-index: 2;
 `;
 
 const TrackImage = styled.img`
-  background-color: #f5f5f5;
-  width: 120px;
-  height: 120px;
+  background-color: #1f1f1f;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  margin-left: 8px;
+  width: 64px;
+  height: 64px;
   border-radius: 8px;
   object-fit: cover;
 `;
 
 const TrackDetails = styled.div`
-  background-color: #f5f5f5;
   position: absolute;
-  top: 25px;   
-  left: 170px;    
+  background-color: #1f1f1f;
+  bottom: 35px;
+  left: 88px;
   display: flex;
   flex-direction: column;
-  color: #111;
-  z-index: 3;    
+  color: #FFF;
+  z-index: 2;
 `;
 
 const Title = styled.div`
-  background-color: #f5f5f5;
+  background-color: #1f1f1f;
   font-size: 17px;
   font-weight: bold;
   width: 100%;
+  z-index: 2;
 `;
 
 const Artist = styled.div`
   font-size: 15px;
-  color: #555;
+  color: #b7a8a8;
   width: 100%;
-  width: 50vw;
+  width: 20vw;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background-color: #1f1f1f;
+  z-index: 2;
 `;
 
 const IframeContainer = styled.div`
@@ -89,18 +92,20 @@ const MusicPlayer: React.FC = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <InfoOverlay>
         <TrackImage src={currentTrack.thumbnail} alt="Track artwork" />
         <TrackDetails>
           <Title>{currentTrack.title}</Title>
-          <Artist>{currentTrack.genre.name}</Artist>
+          <Artist>{currentTrack.genre?.name}</Artist>
         </TrackDetails>
-      </InfoOverlay>
 
       <IframeContainer>
         <iframe
-          src={`https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/${currentTrack.secureUrl}&auto_play=true`}
-          allow="autoplay"
+          src={`https://open.spotify.com/embed/track/${currentTrack.secureUrl}?theme=0`}
+          width="100%"
+          height="100%"
+          style={{ border: "none", height: 150 }}
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          title="Spotify Player"
         />
       </IframeContainer>
     </Wrapper>
