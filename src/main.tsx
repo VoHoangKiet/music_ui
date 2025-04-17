@@ -13,17 +13,17 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <ConfigProvider>
-        <AuthProvider>
-          <AudioPlayerProvider>
-            <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <ConfigProvider>
+          <AuthProvider>
+            <AudioPlayerProvider>
               <RootRoutes />
               <MusicPlayer />
-            </QueryClientProvider>
-          </AudioPlayerProvider>
-        </AuthProvider>
-      </ConfigProvider>
-    </BrowserRouter>
+            </AudioPlayerProvider>
+          </AuthProvider>
+        </ConfigProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>
 );

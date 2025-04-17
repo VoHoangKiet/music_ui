@@ -14,7 +14,9 @@ export function useUserInfo() {
             Authorization: `Bearer ${accessToken}`,
           },
         })
-        .then((response) => response.data.data),
+        .then((response) => {
+          return response.data.data
+        }),
   });
 }
 

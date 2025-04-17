@@ -1,9 +1,9 @@
 import { JSX } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useUserInfo } from "../hook/auth/useUserInfo";
 
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
-  const { user } = useAuth();
+  const { data: user } = useUserInfo();
 
   if (!user) {
     return <Navigate to="/login" />;

@@ -123,6 +123,10 @@ const StyledTitle = styled.h3`
   color: #fff;
   transition: color 0.3s ease;
 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
   &:hover {
     color: #ff6347;
   }

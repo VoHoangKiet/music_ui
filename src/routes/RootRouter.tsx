@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { LoginPage, RegisterPage } from "../pages";
+import { LoginPage, ProfilePage, RegisterPage } from "../pages";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import LandingPage from "../pages/LandingPage";
@@ -10,10 +9,11 @@ import AdminPage from "../pages/admin/AdminPage";
 import AlbumListPage from "../pages/AlbumListPage";
 import AlbumDetailPage from "../pages/AlbumDetailPage";
 import SongDetailPage from "../pages/SongDetailPage";
+import { useUserInfo } from "../hook/auth/useUserInfo";
 
 const RootRoutes = () => {
-  const { user } = useAuth();
-
+  const { data: user } = useUserInfo();
+  
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
@@ -21,6 +21,7 @@ const RootRoutes = () => {
 
       <Route element={<MainLayout />}>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
           <Route path="/albums" element={<AlbumListPage />} />
           <Route path="/album/:albumId" element={<AlbumDetailPage />} />
           <Route path="/song/:songId" element={<SongDetailPage />} />

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useMemo } from "react";
 import { SearchBar } from "../../landing";
+import { useUserInfo } from "../../../hook/auth/useUserInfo";
 
 const { Header } = Layout;
 
@@ -20,6 +21,7 @@ const Branding = styled.div`
   font-size: 28px;
   font-weight: bold;
   color: #000000;
+  cursor: pointer;
 `;
 
 const MenuLanding = styled(Menu)`
@@ -95,7 +97,8 @@ const menuItems = [
 
 const HeaderLanding = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { data: user } = useUserInfo();
+  const { logout } = useAuth();
 
   const handleSignIn = () => navigate("/login");
   const handleSignUp = () => navigate("/signup");
