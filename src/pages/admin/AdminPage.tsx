@@ -4,6 +4,7 @@ import GenreManagement from './GenreManagement';
 import ArtistManagement from './ArtistManagement';
 import AlbumManagement from './AlbumManagement';
 import { AdminContainer, AdminHeader } from './styles';
+import SongManagement from './SongManagement';
 
 const AdminPage: React.FC = () => {
   const items = [
@@ -21,6 +22,11 @@ const AdminPage: React.FC = () => {
       key: 'albums',
       label: 'Albums',
       children: <AlbumManagement />,
+    },
+    {
+      key: 'songs',
+      label: 'Songs',
+      children: <SongManagement />,
     },
   ];
 

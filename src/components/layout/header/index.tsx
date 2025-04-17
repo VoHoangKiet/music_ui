@@ -30,6 +30,7 @@ const MenuLanding = styled(Menu)`
   display: flex;
   justify-content: space-evenly;
   border-bottom: none;
+  font-size: 16px;
 `;
 
 const ButtonSignUp = styled(Button)`
@@ -91,8 +92,7 @@ const SignOutButton = styled(PopoverButton)`
 const menuItems = [
   { key: "1", label: "Home" },
   { key: "2", label: "Album" },
-  { key: "3", label: "New Release" },
-  { key: "4", label: "Category" },
+  { key: "3", label: "Artist" },
 ];
 
 const HeaderLanding = () => {
@@ -108,6 +108,8 @@ const HeaderLanding = () => {
       navigate("/");
     } else if (key === "2") {
       navigate("/albums");
+    } else if (key === "3") {
+      navigate("/artists");
     }
   };
 

@@ -10,10 +10,12 @@ import AlbumListPage from "../pages/AlbumListPage";
 import AlbumDetailPage from "../pages/AlbumDetailPage";
 import SongDetailPage from "../pages/SongDetailPage";
 import { useAuth } from "../context/AuthContext";
+import ArtistListPage from "../pages/ArtistListPage";
+import ArtistDetailPage from "../pages/ArtistDetailPage";
 
 const RootRoutes = () => {
   const { isLoggedIn } = useAuth();
-  console.log(isLoggedIn);
+
   return (
     <Routes>
       <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <LoginPage />} />
@@ -23,6 +25,8 @@ const RootRoutes = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
           <Route path="/albums" element={<AlbumListPage />} />
+          <Route path="/artists" element={<ArtistListPage />} />
+          <Route path="/artist/:artistId" element={<ArtistDetailPage />} />
           <Route path="/album/:albumId" element={<AlbumDetailPage />} />
           <Route path="/song/:songId" element={<SongDetailPage />} />
           <Route path="/landing2" element={<ProtectedRoute element={<LandingPage />} />} />
