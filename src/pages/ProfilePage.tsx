@@ -10,6 +10,7 @@ import {
   Modal,
   Form,
   Input,
+  Empty,
 } from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
 import styled from "styled-components";
@@ -19,6 +20,7 @@ import { useUpdateUser } from "../hook/auth/useUpdateUser";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserInfo } from "../hook/auth/useUserInfo";
 import { useChangePassword } from "../hook/auth/useChangePassword";
+import { useMyHistory } from "../hook/song/useMyHistory";
 
 const { Title, Text } = Typography;
 
@@ -26,6 +28,7 @@ const ProfileContainer = styled.div`
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  margin-bottom: 80px;
 `;
 
 const UserInfoSection = styled.div`
@@ -48,6 +51,38 @@ const UserDetails = styled.div`
 const PlaylistsSection = styled.div`
   margin-top: 32px;
 `;
+const HistorySection = styled.div`
+  margin-top: 48px;
+`;
+
+const HistoryItem = styled.div`
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-bottom: 16px;
+`;
+
+const HistoryImage = styled.img`
+  width: 81px;
+  height: 81px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+`;
+
+const SongInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const formatDate = (dateStr: string) =>
+  new Date(dateStr).toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
 const PlaylistGrid = styled.div`
   display: grid;
@@ -73,12 +108,19 @@ const PlaylistImage = styled.img`
   object-fit: cover;
 `;
 
+const HistoryList = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+`;
+
 export const ProfilePage = () => {
   const queryClient = useQueryClient();
   const { data: user } = useUserInfo();
   const { logout } = useAuth();
   const { data: playlists, isLoading } = useAllMyPlaylists();
   const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+  const { data: history, isLoading: isHistoryLoading } = useMyHistory();
+
   const navigate = useNavigate();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -180,6 +222,10 @@ export const ProfilePage = () => {
           <div style={{ textAlign: "center", padding: "32px" }}>
             <Spin size="large" />
           </div>
+        ) : playlists.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "32px" }}>
+            <Empty description="You haven't created any playlists yet." />
+          </div>
         ) : (
           <PlaylistGrid>
             {playlists.map((playlist) => (
@@ -188,7 +234,7 @@ export const ProfilePage = () => {
                 hoverable
                 cover={
                   <PlaylistImage
-                    src={playlist.songs[0].thumbnail}
+                    src={playlist.songs[0]?.thumbnail}
                     alt={playlist.name}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src =
@@ -207,6 +253,31 @@ export const ProfilePage = () => {
           </PlaylistGrid>
         )}
       </PlaylistsSection>
+
+      <HistorySection>
+        <Title level={3}>My History</Title>
+        {isHistoryLoading ? (
+          <div style={{ textAlign: "center", padding: "32px" }}>
+            <Spin size="large" />
+          </div>
+        ) : history?.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "32px" }}>
+            <Empty description="You haven't listened to any songs yet." />
+          </div>
+        ) : (
+          <HistoryList>
+            {history?.map((item) => (
+              <HistoryItem key={item._id}>
+                <HistoryImage src={item.song?.thumbnail} />
+                <SongInfo>
+                  <Title level={4}>{item.song?.title}</Title>
+                  <Text type="secondary">{formatDate(item.createdAt)}</Text>
+                </SongInfo>
+              </HistoryItem>
+            ))}
+          </HistoryList>
+        )}
+      </HistorySection>
 
       <Modal
         title="Edit Profile"

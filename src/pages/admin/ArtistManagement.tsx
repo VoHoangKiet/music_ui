@@ -169,6 +169,11 @@ const ArtistManagement: React.FC = () => {
         columns={columns} 
         dataSource={artists} 
         rowKey="_id" 
+        pagination={{
+          pageSize: 5, // Adjust the pageneeded size as
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20"],
+        }}
       />
 
       <Modal

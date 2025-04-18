@@ -220,6 +220,11 @@ const AlbumManagement: React.FC = () => {
         columns={columns} 
         dataSource={albums} 
         rowKey="_id" 
+        pagination={{
+          pageSize: 5, // Adjust the pageneeded size as
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20"],
+        }}
       />
 
       <Modal

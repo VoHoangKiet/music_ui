@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Button, Space, Modal, Form, Input, message, Spin, notification } from "antd";
+import {
+  Button,
+  Space,
+  Modal,
+  Form,
+  Input,
+  message,
+  Spin,
+  notification,
+} from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { TableContainer, ActionButton, StyledTable } from "./styles";
 import type { TableProps } from "antd";
@@ -86,9 +95,13 @@ const GenreManagement: React.FC = () => {
           onError: (error: any) => {
             notification.error({
               message: "Failed to delete genre",
-              description: error.response?.data?.errors[0].errorMessage || error.message,
+              description:
+                error.response?.data?.errors[0].errorMessage || error.message,
             });
-            console.error("Delete genre error:", error.response?.data?.errors[0].errorMessage);
+            console.error(
+              "Delete genre error:",
+              error.response?.data?.errors[0].errorMessage
+            );
           },
         });
       },
@@ -142,7 +155,16 @@ const GenreManagement: React.FC = () => {
         Add Genre
       </ActionButton>
 
-      <StyledTable columns={columns} dataSource={genres} rowKey="_id" />
+      <StyledTable
+        columns={columns}
+        dataSource={genres}
+        rowKey="_id"
+        pagination={{
+          pageSize: 5, // Adjust the pageneeded size as
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20"],
+        }}
+      />
 
       <Modal
         title={editingGenre ? "Edit Genre" : "Add Genre"}

@@ -46,10 +46,10 @@ export const StyledTable = styled(Table)`
   }
 
   .ant-pagination-item a {
-    color: #fff !important;
+    color: black !important;
   }
 
   .ant-pagination-item-active {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: yellow !important;
   }
 ` as React.FC<TableProps<any>>;

@@ -184,7 +184,16 @@ const SongManagement: React.FC = () => {
         </Button>
       </Space>
 
-      <StyledTable columns={columns} dataSource={songs} rowKey="_id" />
+      <StyledTable 
+        columns={columns} 
+        dataSource={songs} 
+        rowKey="_id" 
+        pagination={{
+          pageSize: 5, // Adjust the pageneeded size as 
+          showSizeChanger: true,
+          pageSizeOptions: ['5', '10', '20'],
+        }} 
+      />
 
       {/* Edit Modal */}
       <Modal
