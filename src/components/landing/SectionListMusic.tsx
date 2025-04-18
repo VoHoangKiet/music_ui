@@ -54,7 +54,7 @@ export const SectionListMusic = ({
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Title>{playlistName ? playlistName : "Trending Songs"}</Title>
+      <Title>{playlistName ? playlistName : "Popular Songs"}</Title>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         {songs?.map((song, index) => (
           <MusicCard

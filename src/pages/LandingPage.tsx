@@ -24,20 +24,20 @@ const CustomContent = styled(Content)`
   box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.1);
   height: calc(100vh - 80px);
   overflow-y: auto;
-  
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {
     display: none;
   }
-  
+
   /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `;
 
 const LandingPage = () => {
   const { data, isLoading } = useAllSongs();
-  
+
   if (isLoading || !data) {
     return (
       <Wrapper>
@@ -45,12 +45,16 @@ const LandingPage = () => {
       </Wrapper>
     );
   }
-
+  const songTrending = data
+    .sort((song1, song2) => song2.playCount - song1.playCount)
+    .slice(0, 5);
+    
   return (
     <Wrapper>
       <CustomLayout>
         <LibrarySider />
         <CustomContent>
+          <SectionListMusic playlistName="Trending" songs={songTrending} />
           <SectionListMusic songs={data} />
         </CustomContent>
       </CustomLayout>

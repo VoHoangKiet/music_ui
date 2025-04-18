@@ -1,6 +1,7 @@
 // contexts/AudioPlayerContext.tsx
 import React, { createContext, useContext, useState } from "react";
 import { Song } from "../hook/song/useAllSongs";
+import { useCountPlaySong } from "../hook/song/useCountPlaySong";
 
 
 interface AudioPlayerContextProps {
@@ -12,8 +13,9 @@ const AudioPlayerContext = createContext<AudioPlayerContextProps | undefined>(un
 
 export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
-
+  const { mutate: countPlaySong } = useCountPlaySong();
   const playTrack = (track: Song) => {
+    countPlaySong(track._id);
     setCurrentTrack(track);
   };
 

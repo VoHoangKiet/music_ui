@@ -10,17 +10,23 @@ import {
   notification,
   DatePicker,
   Select,
+  List,
 } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  CloudDownloadOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
-import { TableContainer, ActionButton, StyledTable } from "./styles";
+import { TableContainer, StyledTable } from "./styles";
 import { Song, useAllSongs } from "../../hook/song/useAllSongs";
-// import { useUpdateSong } from "../../hook/song/useUpdateSong";
-// import { useDeleteSong } from "../../hook/song/useDeleteSong";
-import { useAllGenres } from "../../hook/genre/useAllGenres";
-import { useQueryClient } from "@tanstack/react-query";
 import { useUpdateSong } from "../../hook/song/useUpdateSong";
 import { useDeleteSong } from "../../hook/song/useDeleteSong";
+import { useAllGenres } from "../../hook/genre/useAllGenres";
+import { useAllSongsByQuery } from "../../hook/song/useAllSongsByQuery";
+import { useImportSongByQuery } from "../../hook/song/useImportSongByQuery";
+import { useQueryClient } from "@tanstack/react-query";
+import { useImportAllSongByQuery } from "../../hook/song/useImportAllSongByQuery";
 
 const { Option } = Select;
 
@@ -30,33 +36,27 @@ const SongManagement: React.FC = () => {
   const { data: genres } = useAllGenres();
   const { mutate: updateSongMutation } = useUpdateSong();
   const { mutate: deleteSongMutation } = useDeleteSong();
+  const { mutate: importSongMutation, isPending: isImporting } =
+    useImportSongByQuery();
+  const { mutate: importAllSongMutation, isPending: isImportingAll } =
+    useImportAllSongByQuery();
+
+  const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingSong, setEditingSong] = useState<Song | null>(null);
-  const [form] = Form.useForm();
 
+  const [isImportModalVisible, setIsImportModalVisible] = useState(false);
+  const [spotifyQuery, setSpotifyQuery] = useState("");
+  const { data: spotifyTracks, isFetching: isSearching } =
+    useAllSongsByQuery(spotifyQuery);
+  console.log(spotifyTracks);
   if (isLoading || !songs) return <Spin size="large" />;
 
   const columns = [
-    {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-    },
-    {
-      title: "Genre",
-      dataIndex: ["genre", "name"],
-      key: "genre",
-    },
-    {
-      title: "Play Count",
-      dataIndex: "playCount",
-      key: "playCount",
-    },
-    {
-      title: "Duration",
-      dataIndex: "duration",
-      key: "duration",
-    },
+    { title: "Title", dataIndex: "title", key: "title" },
+    { title: "Genre", dataIndex: ["genre", "name"], key: "genre" },
+    { title: "Play Count", dataIndex: "playCount", key: "playCount" },
+    { title: "Duration", dataIndex: "duration", key: "duration" },
     {
       title: "Release Date",
       dataIndex: "releaseDate",
@@ -83,16 +83,9 @@ const SongManagement: React.FC = () => {
     },
   ];
 
-  const handleAdd = () => {
-    setEditingSong(null);
-    form.resetFields();
-    setIsModalVisible(true);
-  };
-
   const handleEdit = (song: Song) => {
     setEditingSong(song);
     setIsModalVisible(true);
-  
     setTimeout(() => {
       form.setFieldsValue({
         ...song,
@@ -101,7 +94,6 @@ const SongManagement: React.FC = () => {
       });
     }, 0);
   };
-  
 
   const handleDelete = (song: Song) => {
     Modal.confirm({
@@ -149,14 +141,52 @@ const SongManagement: React.FC = () => {
     });
   };
 
+  const handleImport = (trackName: string) => {
+    importSongMutation(trackName, {
+      onSuccess: () => {
+        message.success("Song imported successfully");
+        queryClient.invalidateQueries({ queryKey: ["songs"] });
+        setIsImportModalVisible(false);
+      },
+      onError: (error: any) => {
+        notification.error({
+          message: "Failed to import song",
+          description: error.response?.data?.message || error.message,
+        });
+      },
+    });
+  };
+
+  const handleImportAll = () => {
+    importAllSongMutation(spotifyQuery, {
+      onSuccess: () => {
+        message.success("All songs imported successfully");
+        queryClient.invalidateQueries({ queryKey: ["songs"] });
+        setIsImportModalVisible(false);
+      },
+      onError: (error: any) => {
+        notification.error({
+          message: "Failed to import all songs",
+          description: error.response?.data?.message || error.message,
+        });
+      },
+    });
+  };
+
   return (
     <TableContainer>
-      <ActionButton type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-        Add Song
-      </ActionButton>
+      <Space style={{ marginBottom: 16 }}>
+        <Button
+          icon={<CloudDownloadOutlined />}
+          onClick={() => setIsImportModalVisible(true)}
+        >
+          Import from Spotify
+        </Button>
+      </Space>
 
       <StyledTable columns={columns} dataSource={songs} rowKey="_id" />
 
+      {/* Edit Modal */}
       <Modal
         title={"Edit Song"}
         open={isModalVisible}
@@ -193,6 +223,60 @@ const SongManagement: React.FC = () => {
             </Form.Item>
           </Form>
         )}
+      </Modal>
+
+      <Modal
+        title="Import Song from Spotify"
+        open={isImportModalVisible}
+        onCancel={() => setIsImportModalVisible(false)}
+        footer={null}
+        destroyOnClose
+      >
+        <Space direction="vertical" style={{ width: "100%" }} size="middle">
+          <Input.Search
+            placeholder="Search Spotify track..."
+            enterButton
+            allowClear
+            loading={isSearching}
+            onSearch={(value) => setSpotifyQuery(value)}
+          />
+
+          <div style={{ textAlign: "right" }}>
+            <Button
+              type="primary"
+              onClick={handleImportAll}
+              loading={isImportingAll}
+              disabled={!spotifyTracks?.length}
+            >
+              Import All
+            </Button>
+          </div>
+
+          <List
+            style={{ maxHeight: 300, overflowY: "auto" }}
+            loading={isSearching}
+            bordered
+            dataSource={spotifyTracks || []}
+            renderItem={(track) => (
+              <List.Item
+                actions={[
+                  <Button
+                    type="link"
+                    loading={isImporting}
+                    onClick={() => handleImport(track.name)}
+                  >
+                    Import
+                  </Button>,
+                ]}
+              >
+                <List.Item.Meta
+                  title={track.name}
+                  description={track.artists.map((a: any) => a.name).join(", ")}
+                />
+              </List.Item>
+            )}
+          />
+        </Space>
       </Modal>
     </TableContainer>
   );
