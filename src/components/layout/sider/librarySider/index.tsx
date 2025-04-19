@@ -1,4 +1,4 @@
-import { Layout, Button, message, Modal, Form, Input } from "antd";
+import { Layout, Button, message, Modal, Form, Input, Skeleton, Empty } from "antd";
 import styled from "styled-components";
 import { HeartFilled } from "@ant-design/icons";
 import { useFavoriteSongs } from "../../../../hook/song/useFavoriteSongs";
@@ -9,6 +9,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCreatePlaylist } from "../../../../hook/playlist/useCreatePlaylist";
+import { useRecommendSong } from "../../../../hook/song/useRecommendSong";
+import { useAudioPlayer } from "../../../../context/AudioPlayerContext";
 
 const { Sider } = Layout;
 
@@ -104,7 +106,13 @@ export const LibrarySider = ({ width = 300 }: Props) => {
   const { mutate: createPlaylist } = useCreatePlaylist();
   const [isShowModalCreate, setIsShowModalCreate] = useState(false);
   const [form] = Form.useForm();
+  const [isShowRecommendModal, setIsShowRecommendModal] = useState(false);
+  const { data: recommendSongs, isLoading: isLoadingRecommend } = useRecommendSong();
+  const { playTrack } = useAudioPlayer();
 
+  if(isLoadingRecommend) {
+    return <Skeleton active />;
+  }
   const handleDelete = (playlistId: string) => {
     if (playlistId) {
       deletePlaylist(playlistId, {
@@ -139,7 +147,12 @@ export const LibrarySider = ({ width = 300 }: Props) => {
     <CustomSider theme="light" width={width}>
       <Header>
         <div>Thư viện</div>
-        <CreateButton onClick={() => setIsShowModalCreate(true)}>+ Tạo</CreateButton>
+        <CreateButton onClick={() => setIsShowModalCreate(true)}>
+          + Tạo
+        </CreateButton>
+        <CreateButton onClick={() => setIsShowRecommendModal(true)}>
+          🎧 Gợi ý
+        </CreateButton>
       </Header>
 
       <PlaylistList>
@@ -197,6 +210,48 @@ export const LibrarySider = ({ width = 300 }: Props) => {
             <Input.TextArea placeholder="Mô tả ngắn..." />
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        title="Gợi ý nhạc cho bạn"
+        open={isShowRecommendModal}
+        onCancel={() => setIsShowRecommendModal(false)}
+        footer={null}
+      >
+        {recommendSongs && recommendSongs.length > 0 ? (
+          recommendSongs.map((recommendSong) => (
+            <Fragment key={recommendSong._id}>
+              <div>{recommendSong.title}</div>
+              {recommendSong.songs.map((song) => (
+                <div
+                  key={song._id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "8px 0",
+                    borderBottom: "1px solid #eee",
+                  }}
+                >
+                  <div>
+                    <strong>{song.title}</strong> <br />
+                    <span style={{ fontSize: 12, color: "#999" }}>
+                      {song.lyric}
+                    </span>
+                  </div>
+                  <div>
+                    <Button size="small" type="link" onClick={() => navigate(`/song/${song._id}`)}>
+                      Xem chi tiết
+                    </Button>
+                    <Button size="small" type="link" onClick={() => playTrack(song)}>
+                      Phát
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </Fragment>
+          ))
+        ) : (
+          <Empty description="Không có gợi ý nhạc nào." />
+        )}
       </Modal>
     </CustomSider>
   );
